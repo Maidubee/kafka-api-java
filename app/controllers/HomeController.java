@@ -73,15 +73,12 @@ public class HomeController extends Controller {
     public Result kafkaLinkTest() throws InterruptedException, ExecutionException  {
         Properties prop = new Properties();
         /* set the properties value */
-        // prop.setProperty("bootstrap.servers", "bos.f2e_core69.omg.biab.ingdirect.intranet:9093");
+        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
         
         AdminClient adminClient = AdminClient.create(prop);
-        Collection<String> test = adminClient.listTopics(new ListTopicsOptions().timeoutMs(2000)).names().get();
+        Collection<String> test = adminClient.listTopics(new ListTopicsOptions().timeoutMs(4000)).names().get();
+	System.out.println("The request to Kafka worked :)");
         //ListTopicsResult listTopicsResult = adminClient.listTopics(new ListTopicsOptions().timeoutMs(5).listInternal(true));
         return ok(String.join(",", test));
     }
-
-
-
-
 }
