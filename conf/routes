@@ -4,6 +4,6 @@ POST    /test                       controllers.HomeController.test
 GET    /topics/:id                  controllers.HomeController.show(id: String)
 GET    /allTopics                   controllers.HomeController.allTopics
 POST   /createTopic                 controllers.HomeController.createTopic
-DELETE  /deleteTopic/:id           controllers.HomeController.delete(id: String)
+DELETE  /deleteTopic/:id            controllers.HomeController.deleteTopic(id: String)
 GET    /kafkaLinkTest               controllers.HomeController.kafkaLinkTest
 ->     /v1/posts                    posts.Routes
