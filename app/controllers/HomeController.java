@@ -17,6 +17,7 @@ import org.apache.kafka.clients.admin.ListTopicsOptions;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.Set;
@@ -73,9 +74,14 @@ public class HomeController extends Controller {
     public Result kafkaLinkTest() throws InterruptedException, ExecutionException  {
         Properties prop = new Properties();
         /* set the properties value */
-        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        prop.setProperty("bootstrap.servers", "localhost:9092");
         
         AdminClient adminClient = AdminClient.create(prop);
+
+        final NewTopic newTopic = new NewTopic("RobinTesting", 5, (short) 1);
+        final CreateTopicsResult createTopicsResult = adminClient.createTopics(Arrays.asList(newTopic));
+        createTopicsResult.values().get("RobinTesting").get();
+
         Collection<String> test = adminClient.listTopics(new ListTopicsOptions().timeoutMs(4000)).names().get();
 	System.out.println("The request to Kafka worked :)");
         //ListTopicsResult listTopicsResult = adminClient.listTopics(new ListTopicsOptions().timeoutMs(5).listInternal(true));
