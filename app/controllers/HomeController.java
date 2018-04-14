@@ -41,22 +41,55 @@ public class HomeController extends Controller {
 
     public Result show(String id) { return ok(views.html.topics.render(id)); }
 
-    public Result allTopics()   {return ok(render("This will show all topics in the future"));}
+    public Result allTopics() throws InterruptedException, ExecutionException   {
+        /* instantiating Properties */
+        Properties prop = new Properties();
+        /* set the properties value */
+        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
+        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        /* Create adminclient */
+        AdminClient adminClient = AdminClient.create(prop);
+        /* Shows the topics*/
+        Collection<String> test = adminClient.listTopics(new ListTopicsOptions().timeoutMs(4000)).names().get();
+        System.out.println("The request to Kafka worked :)");
+        return ok(String.join(",", test));
+
+    }
 
    // public Result createTopic() { return ok(views.html.createTopic.render()); }
 
     @BodyParser.Of(BodyParser.Json.class)
-    public Result createTopic() {
+    public Result createTopic() throws InterruptedException, ExecutionException {
+        /* parse the body of the incoming Post request to Json */
         JsonNode json = request().body().asJson();
+        /* String name contains the name variable from the json converted to plain text  */
         String name = json.findPath("name").textValue();
-        int randomNumber = json.findPath("randomNumber").intValue();
-        if(name == null || randomNumber == 0) {
+        /* Int numPartition contains the numPartition variable from the json converted to plain text  */
+        int numPartition= json.findPath("numPartition").intValue();
+        /* Int numPartition contains the numPartition variable from the json converted to plain text  */
+        int replicationFactor= json.findPath("replicationFactor").intValue();
+        if(name == null || numPartition  == 0 || replicationFactor == 0) {
             return badRequest("Missing parameter");
         } else {
-            Topic topic = new Topic(name, randomNumber);
+            /* instantiating Properties */
+            Properties prop = new Properties();
+            /* set the properties value */
+            // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
+            prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+            /* Create adminclient */
+            AdminClient adminClient = AdminClient.create(prop);
+            /* instaniate new topic */
+            final NewTopic newTopic = new NewTopic(name, numPartition, (short) replicationFactor);
+            /* create a topic in Kafka and get back the result */
+            CreateTopicsResult createTopicsResult = adminClient.createTopics(Arrays.asList(newTopic));
+            /* waits until the topic is created */
+            createTopicsResult.values().get(name).get();
+            /* Create a new Json Object */
             ObjectNode result = Json.newObject();
-            result.put("name", topic.getName());
-            result.put("randomNumber", topic.getRandomNumber());
+            /* add variables to Json*/
+            result.put("name", name);
+            result.put("numPartition", numPartition);
+            result.put("replicationFactor", replicationFactor);
             return ok(result);
         }
     }
@@ -72,19 +105,21 @@ public class HomeController extends Controller {
     private AdminClient adminClient;
 
     public Result kafkaLinkTest() throws InterruptedException, ExecutionException  {
+        /* instantiating Properties */
         Properties prop = new Properties();
         /* set the properties value */
-        prop.setProperty("bootstrap.servers", "localhost:9092");
-        
+        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
+        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        /* Create adminclient */
         AdminClient adminClient = AdminClient.create(prop);
+        /* instaniate new topic */
+        final NewTopic newTopic = new NewTopic("BiancaTesting", 5, (short) 1);
+        /* create a topic in Kafka and get back the result */
+        CreateTopicsResult createTopicsResult = adminClient.createTopics(Arrays.asList(newTopic));
+        /* waits until the topic is created */
+        createTopicsResult.values().get("BiancaTesting").get();
 
-        final NewTopic newTopic = new NewTopic("RobinTesting", 5, (short) 1);
-        final CreateTopicsResult createTopicsResult = adminClient.createTopics(Arrays.asList(newTopic));
-        createTopicsResult.values().get("RobinTesting").get();
-
-        Collection<String> test = adminClient.listTopics(new ListTopicsOptions().timeoutMs(4000)).names().get();
-	System.out.println("The request to Kafka worked :)");
         //ListTopicsResult listTopicsResult = adminClient.listTopics(new ListTopicsOptions().timeoutMs(5).listInternal(true));
-        return ok(String.join(",", test));
+        return ok();
     }
 }
