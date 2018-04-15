@@ -39,7 +39,20 @@ public class HomeController extends Controller {
         return ok(views.html.test.render("Your new application is ready"));
     }
 
-    public Result show(String id) { return ok(views.html.topics.render(id)); }
+    public Result topicDetails(String id) throws InterruptedException, ExecutionException{
+        /* instantiating Properties */
+        Properties prop = new Properties();
+        /* set the properties value */
+        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
+        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        /* Create adminclient */
+        AdminClient adminclient = AdminClient.create(prop);
+        /* Show the topicDetails*/
+        DescribeTopicsResult describeTopicsResult = adminclient.describeTopics(Arrays.asList(id));
+        /* call all() returns a future, then call get() is waiting for the kafka request to complete */
+        Map<String, TopicDescription> topicDescription = describeTopicsResult.all().get();
+        return ok(topicDescription.get(id).toString());
+    }
 
     public Result allTopics() throws InterruptedException, ExecutionException   {
         /* instantiating Properties */
