@@ -43,8 +43,8 @@ public class HomeController extends Controller {
         /* instantiating Properties */
         Properties prop = new Properties();
         /* set the properties value */
-        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
-        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        prop.setProperty("bootstrap.servers", "172.18.11.146:9092");
+//        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
         /* Create adminclient */
         AdminClient adminclient = AdminClient.create(prop);
         /* Show the topicDetails*/
@@ -58,8 +58,8 @@ public class HomeController extends Controller {
         /* instantiating Properties */
         Properties prop = new Properties();
         /* set the properties value */
-        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
-        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        prop.setProperty("bootstrap.servers", "172.18.11.146:9092");
+        // prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
         /* Create adminclient */
         AdminClient adminClient = AdminClient.create(prop);
         /* Shows the topics*/
@@ -116,8 +116,8 @@ public class HomeController extends Controller {
         /* instantiating Properties */
         Properties prop = new Properties();
         /* set the properties value */
-        // prop.setProperty("bootstrap.servers", "172.18.11.146:9093");
-        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
+        prop.setProperty("bootstrap.servers", "172.18.11.146:9092");
+//        prop.setProperty("bootstrap.servers", "51.137.52.25:9092");
         AdminClient adminClient = AdminClient.create(prop);
         DeleteTopicsResult deleteTopicsResult = adminClient.deleteTopics(Arrays.asList(id));
 
